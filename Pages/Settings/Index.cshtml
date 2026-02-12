@@ -1,0 +1,143 @@
+﻿@page
+@model WeatherApp.Pages.Settings.IndexModel
+@{
+    ViewData["Title"] = "User Preferences";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-cog me-2"></i>User Preferences
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post">
+                        <!-- WEATHER UNITS SECTION -->
+                        <div class="row mb-4">
+                            <h5 class="border-bottom pb-2">
+                                <i class="fas fa-thermometer-half me-2"></i>Weather Units
+                            </h5>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Preferences.TemperatureUnit" class="form-label fw-bold">Temperature Unit</label>
+                                <select asp-for="Preferences.TemperatureUnit" class="form-select">
+                                    <option value="Celsius">Celsius (°C)</option>
+                                    <option value="Fahrenheit">Fahrenheit (°F)</option>
+                                </select>
+                                <span asp-validation-for="Preferences.TemperatureUnit" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Preferences.WindSpeedUnit" class="form-label fw-bold">Wind Speed Unit</label>
+                                <select asp-for="Preferences.WindSpeedUnit" class="form-select">
+                                    <option value="ms">Meters/second (m/s)</option>
+                                    <option value="kmh">Kilometers/hour (km/h)</option>
+                                    <option value="mph">Miles/hour (mph)</option>
+                                </select>
+                                <span asp-validation-for="Preferences.WindSpeedUnit" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- SYNC SETTINGS SECTION -->
+                        <div class="row mb-4">
+                            <h5 class="border-bottom pb-2">
+                                <i class="fas fa-sync me-2"></i>Sync Settings
+                            </h5>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Preferences.RefreshInterval" class="form-label fw-bold">Auto-Refresh Interval</label>
+                                <div class="input-group">
+                                    <input asp-for="Preferences.RefreshInterval" class="form-control" type="number" min="5" max="120" />
+                                    <span class="input-group-text">minutes</span>
+                                </div>
+                                <span asp-validation-for="Preferences.RefreshInterval" class="text-danger"></span>
+                                <small class="text-muted">Between 5 and 120 minutes</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check mt-4">
+                                    <input asp-for="Preferences.AutoRefreshEnabled" class="form-check-input" />
+                                    <label asp-for="Preferences.AutoRefreshEnabled" class="form-check-label fw-bold">
+                                        Enable Auto-Refresh
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DISPLAY SETTINGS SECTION -->
+                        <div class="row mb-4">
+                            <h5 class="border-bottom pb-2">
+                                <i class="fas fa-palette me-2"></i>Display Settings
+                            </h5>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Preferences.Theme" class="form-label fw-bold">Theme</label>
+                                <select asp-for="Preferences.Theme" class="form-select">
+                                    <option value="Light">Light</option>
+                                    <option value="Dark">Dark</option>
+                                    <option value="Auto">Auto (Follow System)</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check mt-4">
+                                    <input asp-for="Preferences.ShowCoordinates" class="form-check-input" />
+                                    <label asp-for="Preferences.ShowCoordinates" class="form-check-label fw-bold">
+                                        Show Coordinates on Dashboard
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DEFAULT LOCATION SECTION -->
+                        <div class="row mb-4">
+                            <h5 class="border-bottom pb-2">
+                                <i class="fas fa-map-marker-alt me-2"></i>Default Location
+                            </h5>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Preferences.DefaultCity" class="form-label fw-bold">Default City</label>
+                                <input asp-for="Preferences.DefaultCity" class="form-control" placeholder="e.g., London" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Preferences.DefaultCountry" class="form-label fw-bold">Default Country</label>
+                                <input asp-for="Preferences.DefaultCountry" class="form-control" placeholder="e.g., GB" maxlength="2" />
+                                <small class="text-muted">2-letter country code</small>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-page="/Index" class="btn btn-secondary me-md-2">
+                                <i class="fas fa-times me-1"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i>Save Preferences
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>Last updated: @(Model.Preferences.LastUpdated.ToString("yyyy-MM-dd HH:mm"))</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

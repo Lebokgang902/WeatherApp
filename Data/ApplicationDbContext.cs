@@ -12,6 +12,7 @@ namespace WeatherApp.Data
 
         public DbSet<Location> Locations { get; set; }
         public DbSet<WeatherSnapshot> WeatherSnapshots { get; set; }
+        public DbSet<UserPreferences> UserPreferences { get; set; }  // ✅ NEW
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,13 +55,17 @@ namespace WeatherApp.Data
                 .Property(w => w.WindSpeed)
                 .HasPrecision(6, 2);
 
-            // 🔵 ADD RIGHT HERE - Relationship configuration
             // Configure Relationship - when Location is deleted, set LocationId to NULL
             modelBuilder.Entity<WeatherSnapshot>()
                 .HasOne(w => w.Location)
                 .WithMany(l => l.WeatherSnapshots)
                 .HasForeignKey(w => w.LocationId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // ✅ NEW: User Preferences configuration
+            modelBuilder.Entity<UserPreferences>()
+                .HasIndex(p => p.Id)
+                .IsUnique();
 
             // SOFT DELETE GLOBAL FILTER
             modelBuilder.Entity<Location>().HasQueryFilter(l => !l.IsDeleted);
