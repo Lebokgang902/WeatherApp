@@ -180,6 +180,17 @@
                                     </div>
                                 </div>
 
+                               
+                                <div class="coordinates-section mt-2 pt-2 border-top">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <span class="detail-icon">📍</span> Coordinates
+                                        </small>
+                                        <small class="text-muted">
+                                            @location.Latitude.ToString("F4")°, @location.Longitude.ToString("F4")°
+                                        </small>
+                                    </div>
+                                </div>
                                 @if (current.IsConflict)
                                 {
                                     <div class="alert alert-warning mt-3 py-2 small">
