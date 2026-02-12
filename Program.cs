@@ -10,6 +10,7 @@ builder.Services.AddRazorPages();
 // Register Preferences Service
 builder.Services.AddScoped<PreferencesService>();
 
+builder.Services.AddHostedService<WeatherSyncBackgroundService>();
 // Add Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

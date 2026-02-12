@@ -1,4 +1,5 @@
 ﻿@inject WeatherApp.Services.PreferencesService PreferencesService
+@inject WeatherApp.Data.ApplicationDbContext _context
 @{
     var theme = await PreferencesService.GetThemeAsync();
 }
@@ -28,6 +29,34 @@
 
     <!-- Base Styles -->
     <style>
+        /* Fix navbar dropdown clipping issue */
+        .navbar {
+            overflow: visible !important;
+            z-index: 1000 !important;
+        }
+
+        .navbar-collapse {
+            overflow: visible !important;
+        }
+
+        .navbar-nav {
+            overflow: visible !important;
+        }
+
+        .nav-item {
+            overflow: visible !important;
+            position: relative !important;
+        }
+
+        .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            z-index: 9999 !important;
+            margin-top: 0.125rem !important;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
+
         /* Force cards to be semi-transparent - Base styles that work for both themes */
         .weather-card, .feature-card, .card:not(.navbar) {
             backdrop-filter: blur(10px) !important;
@@ -50,6 +79,30 @@
                 background: linear-gradient(135deg, #0077a3, #005a7a) !important;
                 transform: translateY(-2px);
             }
+
+        /* Dropdown menu styling */
+        .dropdown-menu {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            max-height: 400px;
+            overflow-y: auto !important;
+        }
+
+        .dropdown-item {
+            color: #333 !important;
+            padding: 0.5rem 1.5rem !important;
+        }
+
+            .dropdown-item:hover {
+                background: rgba(0, 105, 148, 0.1) !important;
+            }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 
     <!-- Theme-Specific Styles -->
@@ -126,6 +179,20 @@
                 color: #ccc !important;
                 border-color: #ccc !important;
             }
+
+            .dropdown-menu {
+                background: rgba(30, 40, 50, 0.95) !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+            }
+
+            .dropdown-item {
+                color: #fff !important;
+            }
+
+                .dropdown-item:hover {
+                    background: rgba(255,255,255,0.1) !important;
+                    color: #fff !important;
+                }
         </style>
     }
     else if (theme == "Auto")
@@ -169,6 +236,19 @@
                     background: rgba(30, 40, 50, 0.9) !important;
                     color: #fff !important;
                 }
+
+                .dropdown-menu {
+                    background: rgba(30, 40, 50, 0.95) !important;
+                    border: 1px solid rgba(255,255,255,0.1) !important;
+                }
+
+                .dropdown-item {
+                    color: #fff !important;
+                }
+
+                    .dropdown-item:hover {
+                        background: rgba(255,255,255,0.1) !important;
+                    }
             }
         </style>
     }
@@ -188,6 +268,10 @@
                 background: linear-gradient(135deg, rgba(0, 105, 148, 0.95) 0%, rgba(0, 70, 120, 0.95) 100%) !important;
                 color: white !important;
             }
+
+            .dropdown-menu {
+                background: rgba(255, 255, 255, 0.95) !important;
+            }
         </style>
     }
 </head>
@@ -199,10 +283,10 @@
       margin: 0;
       padding: 0;
       @if (theme == "Dark")
-    {
-          <text>color: #fff;</text>
+      {
+              <text>color: #fff;</text>
       }
- ">
+">
 
     <!-- Dark overlay to make text readable -->
     <div style="position: fixed;
@@ -213,22 +297,20 @@
                 background: linear-gradient(135deg,
                     @if (theme == "Dark")
                     {
-                        <text>rgba(0, 20, 40, 0.8)</text>
+                            <text>rgba(0, 20, 40, 0.8)</text>
                     }
                     else
                     {
-
-                        <text>rgba(0, 60, 100, 0.7)</text>
+                            <text>rgba(0, 60, 100, 0.7)</text>
                     }
  0%,
                     @if (theme == "Dark")
                     {
-                        <text>rgba(0, 10, 30, 0.9)</text>
+                            <text>rgba(0, 10, 30, 0.9)</text>
                     }
                     else
                     {
-
-                        <text>rgba(0, 30, 70, 0.7)</text>
+                            <text>rgba(0, 30, 70, 0.7)</text>
                     }
  100%);
                 z-index: -1;
@@ -246,8 +328,10 @@
                             <text>background: rgba(255, 255, 255, 0.85) !important;</text>
                     }
                     backdrop-filter: blur(10px);
-                    -webkit-backdrop-filter: blur(10px);">
-            <div class="container">
+                    -webkit-backdrop-filter: blur(10px);
+                    overflow: visible !important;
+                    z-index: 1000 !important;">
+            <div class="container" style="position: relative; overflow: visible !important;">
                 <a class="navbar-brand" asp-area="" asp-page="/Index" style="font-weight: 600; @if (theme == "Dark") {
                 <text>color: #fff;</text>
                                 }
@@ -258,9 +342,9 @@
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" style="overflow: visible !important;">
+                    <ul class="navbar-nav flex-grow-1" style="overflow: visible !important;">
+                        <li class="nav-item" style="overflow: visible !important; position: relative !important;">
                             <a class="nav-link" asp-area="" asp-page="/Index" style="font-weight: 500; @if (theme == "Dark") {
                             <text>color: #fff;</text>
                                                         } else
@@ -272,6 +356,48 @@
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
+
+                        <!-- Historical Data Dropdown - FIXED POSITIONING -->
+                        <li class="nav-item dropdown" style="overflow: visible !important; position: relative !important;">
+                            <a class="nav-link dropdown-toggle" href="#" id="historyDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-weight: 500; @if (theme == "Dark") {
+                            <text>color: #fff;</text>
+                                                        } else
+                            {
+
+                                <text>color: #333;</text>
+                            }
+">
+                                <i class="fas fa-chart-line"></i> Historical Data
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="historyDropdown" style="position: absolute !important; top: 100% !important; left: 0 !important; z-index: 9999 !important;">
+                                @{
+                                        try
+                                        {
+                                                var locations = _context.Locations.Where(l => !l.IsDeleted).OrderBy(l => l.DisplayName ?? l.City).ToList();
+                                                if (locations.Any())
+                                                {
+                                                        foreach (var loc in locations)
+                                                        {
+                                                                <li>
+                                                                    <a class="dropdown-item" asp-page="/History/Index" asp-route-id="@loc.Id" asp-route-days="7">
+                                                                        <i class="fas fa-map-marker-alt me-2"></i> @(loc.DisplayName ?? loc.City), @loc.Country
+                                                                    </a>
+                                                                </li>
+                                                        }
+                                                }
+                                                else
+                                                {
+                                                        <li><span class="dropdown-item-text text-muted"><i class="fas fa-info-circle me-2"></i>No locations added</span></li>
+                                                }
+                                        }
+                                        catch
+                                        {
+                                                <li><span class="dropdown-item-text text-muted"><i class="fas fa-spinner me-2"></i>Loading...</span></li>
+                                        }
+                                }
+                            </ul>
+                        </li>
+
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-page="/Settings/Index" style="font-weight: 500; @if (theme == "Dark") {
                             <text>color: #fff;</text>
@@ -302,7 +428,7 @@
         </nav>
     </header>
 
-    <div class="container" style="background: transparent;">
+    <div class="container" style="background: transparent; position: relative; z-index: 1;">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

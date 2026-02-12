@@ -1,0 +1,239 @@
+﻿@page
+@model WeatherApp.Pages.History.IndexModel
+@{
+    ViewData["Title"] = $"Historical Weather - {Model.Location?.DisplayName ?? Model.Location?.City}";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>📊 Historical Weather Data</h1>
+            <h4 class="text-muted">@(Model.Location?.DisplayName ?? Model.Location?.City), @Model.Location?.Country</h4>
+            <p class="text-muted">
+                <i class="fas fa-map-pin"></i> @Model.Location?.Latitude.ToString("F4")°, @Model.Location?.Longitude.ToString("F4")°
+            </p>
+        </div>
+        <div class="col text-end">
+            <a asp-page="/Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Time Range Selector -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-calendar"></i> Time Range</h5>
+                </div>
+                <div class="card-body">
+                    <div class="btn-group" role="group">
+                        <a asp-page="/History/Index" asp-route-id="@Model.Location.Id" asp-route-days="7"
+                           class="btn @(ViewData["Days"]?.ToString() == "7" ? "btn-primary" : "btn-outline-primary")">
+                            Last 7 Days
+                        </a>
+                        <a asp-page="/History/Index" asp-route-id="@Model.Location.Id" asp-route-days="14"
+                           class="btn @(ViewData["Days"]?.ToString() == "14" ? "btn-primary" : "btn-outline-primary")">
+                            Last 14 Days
+                        </a>
+                        <a asp-page="/History/Index" asp-route-id="@Model.Location.Id" asp-route-days="30"
+                           class="btn @(ViewData["Days"]?.ToString() == "30" ? "btn-primary" : "btn-outline-primary")">
+                            Last 30 Days
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.HistoricalData.Any())
+    {
+        <!-- Summary Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Average Temperature</h6>
+                        <h3>@Model.HistoricalData.Average(w => w.Temperature).ToString("F1")°C</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Max Temperature</h6>
+                        <h3>@Model.HistoricalData.Max(w => w.Temperature).ToString("F1")°C</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Min Temperature</h6>
+                        <h3>@Model.HistoricalData.Min(w => w.Temperature).ToString("F1")°C</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h6 class="text-muted">Total Records</h6>
+                        <h3>@Model.HistoricalData.Count</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Temperature Chart -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-line"></i> Temperature Trend</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="temperatureChart" style="width:100%; height:400px;"></canvas>
+            </div>
+        </div>
+
+        <!-- Historical Data Table -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-table"></i> Historical Readings</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Temperature</th>
+                                <th>Feels Like</th>
+                                <th>Conditions</th>
+                                <th>Humidity</th>
+                                <th>Wind</th>
+                                <th>Pressure</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.HistoricalData.Take(50))
+                            {
+                                <tr>
+                                    <td>@item.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td><strong>@item.Temperature.ToString("F1")°C</strong></td>
+                                    <td>@item.FeelsLike.ToString("F1")°C</td>
+                                    <td>
+                                        <span class="weather-icon-small">@GetWeatherIcon(item.WeatherMain)</span>
+                                        @item.WeatherDescription
+                                    </td>
+                                    <td>@item.Humidity%</td>
+                                    <td>@item.WindSpeed.ToString("F1") m/s</td>
+                                    <td>@item.Pressure hPa</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (Model.HistoricalData.Count > 50)
+                    {
+                        <p class="text-muted text-center mt-2">
+                            Showing last 50 of @Model.HistoricalData.Count records
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <h4 class="alert-heading">No Historical Data Yet!</h4>
+            <p>Start syncing weather data to build historical records. Click the Refresh button on the dashboard to fetch current weather.</p>
+            <hr>
+            <a asp-page="/Index" class="btn btn-primary">Return to Dashboard</a>
+        </div>
+    }
+</div>
+
+@functions {
+    public static string GetWeatherIcon(string weatherMain)
+    {
+        return weatherMain?.ToLower() switch
+        {
+            "clear" => "☀️",
+            "sunny" => "☀️",
+            "clouds" => "☁️",
+            "rain" => "🌧️",
+            "drizzle" => "🌦️",
+            "thunderstorm" => "⛈️",
+            "snow" => "❄️",
+            "mist" => "🌫️",
+            "fog" => "🌫️",
+            "haze" => "🌫️",
+            _ => "🌤️"
+        };
+    }
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Create temperature chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('temperatureChart').getContext('2d');
+
+            const chartData = {
+                labels: [@Html.Raw(string.Join(",", Model.HistoricalData.OrderBy(w => w.Timestamp).Select(w => $"'{w.Timestamp:MM-dd HH:mm}'")))],
+                datasets: [
+                    {
+                        label: 'Temperature (°C)',
+                        data: [@string.Join(",", Model.HistoricalData.OrderBy(w => w.Timestamp).Select(w => w.Temperature.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)))],
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.1)',
+                        tension: 0.1,
+                        fill: true
+                    },
+                    {
+                        label: 'Feels Like (°C)',
+                        data: [@string.Join(",", Model.HistoricalData.OrderBy(w => w.Timestamp).Select(w => w.FeelsLike.ToString("F1", System.Globalization.CultureInfo.InvariantCulture)))],
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                        tension: 0.1,
+                        fill: true
+                    }
+                ]
+            };
+
+            new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}
