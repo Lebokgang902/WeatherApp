@@ -8,15 +8,18 @@ namespace WeatherApp.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IWeatherService _weatherService;
+        private readonly WeatherCacheService _cacheService; // ✅ ADDED
         private readonly ILogger<SyncService> _logger;
 
         public SyncService(
             ApplicationDbContext context,
             IWeatherService weatherService,
+            WeatherCacheService cacheService, // ✅ ADDED
             ILogger<SyncService> logger)
         {
             _context = context;
             _weatherService = weatherService;
+            _cacheService = cacheService; // ✅ ADDED
             _logger = logger;
         }
 
@@ -36,6 +39,10 @@ namespace WeatherApp.Services
             try
             {
                 var syncResult = new SyncResult { LocationId = locationId };
+
+                // ✅ CLEAR CACHE BEFORE FETCHING FRESH DATA
+                _logger.LogInformation($"Step 0: Clearing cache for {location.City}, {location.Country}");
+                _cacheService.ClearLocationCache(location.City, location.Country);
 
                 // 1. Fetch current weather
                 _logger.LogInformation($"Step 1: Fetching current weather for {location.City}, {location.Country}");
@@ -178,9 +185,14 @@ namespace WeatherApp.Services
                 return SyncResult.Fail($"Sync failed: {ex.Message}");
             }
         }
+
         public async Task<BulkSyncResult> SyncAllLocationsAsync()
         {
-            var locations = await _context.Locations.ToListAsync();
+            _logger.LogInformation("=== STARTING BULK SYNC ===");
+            var locations = await _context.Locations
+                .Where(l => !l.IsDeleted)
+                .ToListAsync();
+
             var results = new List<SyncResult>();
 
             foreach (var location in locations)
@@ -189,20 +201,23 @@ namespace WeatherApp.Services
                 results.Add(result);
 
                 // Small delay to avoid rate limiting
-                await Task.Delay(100);
+                await Task.Delay(1000); // Increased delay for rate limiting
             }
 
-            return new BulkSyncResult
+            var bulkResult = new BulkSyncResult
             {
                 TotalLocations = locations.Count,
                 Successful = results.Count(r => r.Success),
                 Failed = results.Count(r => !r.Success),
                 Results = results
             };
+
+            _logger.LogInformation($"=== BULK SYNC COMPLETED - Success: {bulkResult.Successful}, Failed: {bulkResult.Failed} ===");
+            return bulkResult;
         }
     }
 
-    // Result classes - add these at the bottom of the same file
+    // Result classes
     public class SyncResult
     {
         public bool Success { get; set; }

@@ -461,3 +461,92 @@ body {
         width: 100%;
     }
 }
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    /* Mobile navigation */
+    .navbar-brand span {
+        font-size: 1.2rem !important;
+    }
+
+    /* Weather cards stack nicely */
+    .weather-card {
+        margin-bottom: 1rem;
+    }
+
+    /* Hero section */
+    .hero-section {
+        padding: 40px 20px !important;
+    }
+
+        .hero-section h1 {
+            font-size: 2rem !important;
+        }
+
+        .hero-section .lead {
+            font-size: 1.2rem !important;
+        }
+
+    /* Temperature display */
+    .temp-value {
+        font-size: 36px !important;
+    }
+
+    /* Weather details stack vertically */
+    .weather-details {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .detail-item {
+        width: 100% !important;
+        justify-content: space-between !important;
+    }
+
+    /* Table responsiveness */
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Card footer buttons stack */
+    .card-footer .d-flex {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .card-footer .btn {
+        width: 100% !important;
+    }
+
+    /* Settings page */
+    .col-md-6 {
+        margin-bottom: 15px;
+    }
+
+    /* Dropdown menus */
+    .dropdown-menu {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 992px) {
+    .col-lg-4 {
+        width: 50% !important;
+    }
+}
+
+/* Touch-friendly buttons */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        padding: 12px 20px !important;
+        font-size: 16px !important;
+    }
+
+    .btn-sm {
+        padding: 8px 16px !important;
+    }
+}
