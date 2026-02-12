@@ -1,0 +1,274 @@
+﻿@page "/"
+@model IndexModel
+@{
+    ViewData["Title"] = "Weather Dashboard";
+}
+
+<!-- Hero Section with Weather Background -->
+<div class="hero-section text-white">
+    <div class="container text-center">
+        <h1 class="display-3 fw-bold animate__animated animate__fadeInDown">
+            <span class="weather-icon">🌤️</span> WeatherWatch
+        </h1>
+        <p class="lead fs-2 animate__animated animate__fadeInUp">Your Personal Weather Command Center</p>
+        <p class="fs-5 mb-5 animate__animated animate__fadeInUp animate__delay-1s">
+            Track weather for your favorite cities around the world
+        </p>
+
+        @if (Model.Locations == null || !Model.Locations.Any())
+        {
+            <a asp-page="/Locations/Create" class="btn btn-light btn-lg px-5 py-3 fs-4 rounded-pill shadow-lg animate__animated animate__bounceIn animate__delay-2s">
+                <span class="me-2">🚀</span> Get Started Now
+            </a>
+        }
+    </div>
+
+    <!-- Weather Decoration Elements -->
+    <div class="weather-decoration">
+        <div class="cloud cloud-1">☁️</div>
+        <div class="cloud cloud-2">☁️</div>
+        <div class="cloud cloud-3">☁️</div>
+        <div class="sun">☀️</div>
+        <div class="rain-drop drop-1">💧</div>
+        <div class="rain-drop drop-2">💧</div>
+        <div class="rain-drop drop-3">💧</div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container mt-5 pt-4">
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">🌍</div>
+                <h3>Global Coverage</h3>
+                <p class="text-muted">Track weather for any city worldwide with real-time data</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">📅</div>
+                <h3>5-Day Forecast</h3>
+                <p class="text-muted">Plan ahead with detailed 5-day weather predictions</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card text-center p-4">
+                <div class="feature-icon mb-3">⭐</div>
+                <h3>Favorite Cities</h3>
+                <p class="text-muted">Save and quickly access your most important locations</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Your Locations Section -->
+@if (Model.Locations != null && Model.Locations.Any())
+{
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">
+                <span class="weather-icon">📍</span> My Watchlist
+            </h2>
+            <a asp-page="/Locations/Create" class="btn btn-primary rounded-pill px-4">
+                <span class="me-2">+</span> Add Location
+            </a>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["SyncConflict"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>⚠️ Data Change Detected:</strong> @TempData["SyncConflict"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="row">
+            @foreach (var location in Model.Locations)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="weather-card @(location.IsFavorite ? "favorite" : "")">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="location-name mb-1">
+                                        @(location.DisplayName ?? location.City), @location.Country
+                                    </h5>
+                                    @if (location.IsFavorite)
+                                    {
+                                        <span class="favorite-badge">⭐ Favorite</span>
+                                    }
+                                </div>
+                                <div class="action-buttons">
+                                    <a asp-page="/Locations/Edit" asp-route-id="@location.Id"
+                                       class="btn btn-sm btn-outline-light rounded-circle me-1"
+                                       title="Edit">
+                                        ✎
+                                    </a>
+                                    <form method="post" asp-page-handler="Delete" asp-route-id="@location.Id"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Remove this location from your watchlist?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-light rounded-circle"
+                                                title="Delete">
+                                            ✕
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            @{
+                                var current = location.WeatherSnapshots?.FirstOrDefault();
+                            }
+
+                            @if (current != null)
+                            {
+                                <div class="weather-main">
+                                    <div class="weather-icon-large">
+                                        @GetWeatherIcon(current.WeatherMain)
+                                    </div>
+                                    <div class="temperature-display">
+                                        <span class="temp-value">@current.Temperature.ToString("F0")</span>
+                                        <span class="temp-unit">°C</span>
+                                    </div>
+                                    <div class="weather-description">
+                                        @current.WeatherDescription
+                                    </div>
+                                    <div class="feels-like">
+                                        Feels like @current.FeelsLike.ToString("F0")°C
+                                    </div>
+                                </div>
+
+                                <div class="weather-details">
+                                    <div class="detail-item">
+                                        <span class="detail-icon">💧</span>
+                                        <div>
+                                            <small class="text-muted">Humidity</small>
+                                            <strong>@current.Humidity%</strong>
+                                        </div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-icon">📊</span>
+                                        <div>
+                                            <small class="text-muted">Pressure</small>
+                                            <strong>@current.Pressure hPa</strong>
+                                        </div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span class="detail-icon">💨</span>
+                                        <div>
+                                            <small class="text-muted">Wind</small>
+                                            <strong>@current.WindSpeed.ToString("F0") m/s</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (current.IsConflict)
+                                {
+                                    <div class="alert alert-warning mt-3 py-2 small">
+                                        ⚠️ @current.ConflictDescription
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted py-4">
+                                    <div class="display-1 mb-3">🌡️</div>
+                                    <p>No weather data available</p>
+                                </div>
+                            }
+
+                            <div class="sync-info">
+                                <small class="text-muted">
+                                    Last sync: @(location.LastSync?.ToString("yyyy-MM-dd HH:mm") ?? "Never")
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-between">
+                                <form method="post" asp-page-handler="Sync" asp-route-id="@location.Id">
+                                    <button type="submit" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        ↻ Refresh
+                                    </button>
+                                </form>
+                                <a asp-page="/Forecast" asp-route-id="@location.Id"
+                                   class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                    📅 5-Day Forecast
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <!-- Empty State - Beautiful Call to Action -->
+    <div class="empty-state container text-center py-5 my-5">
+        <div class="weather-illustration mb-4">
+            <span class="display-1">🌤️</span>
+            <span class="display-1 mx-2">📍</span>
+            <span class="display-1">🌧️</span>
+        </div>
+        <h2 class="fw-bold mb-3">Your Watchlist is Empty</h2>
+        <p class="lead text-muted mb-4">Start tracking weather for your favorite cities around the world</p>
+        <a asp-page="/Locations/Create" class="btn btn-primary btn-lg px-5 py-3 rounded-pill">
+            <span class="me-2">✨</span> Add Your First Location
+        </a>
+
+        <!-- Sample Cities -->
+        <div class="row mt-5 pt-4">
+            <div class="col-12">
+                <h5 class="text-muted mb-4">Popular Cities</h5>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <span class="sample-city">London, GB</span>
+                    <span class="sample-city">New York, US</span>
+                    <span class="sample-city">Tokyo, JP</span>
+                    <span class="sample-city">Paris, FR</span>
+                    <span class="sample-city">Sydney, AU</span>
+                    <span class="sample-city">Cape Town, ZA</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@functions {
+    public static string GetWeatherIcon(string weatherMain)
+    {
+        return weatherMain?.ToLower() switch
+        {
+            "clear" => "☀️",
+            "sunny" => "☀️",
+            "clouds" => "☁️",
+            "rain" => "🌧️",
+            "drizzle" => "🌦️",
+            "thunderstorm" => "⛈️",
+            "snow" => "❄️",
+            "mist" => "🌫️",
+            "fog" => "🌫️",
+            "haze" => "🌫️",
+            _ => "🌤️"
+        };
+    }
+}

@@ -1,0 +1,55 @@
+﻿@page
+@model WeatherApp.Pages.Locations.EditModel
+@{
+    ViewData["Title"] = "Edit Location";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Edit Location</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="Location.Id" />
+                        <input type="hidden" asp-for="Location.City" />
+                        <input type="hidden" asp-for="Location.Country" />
+                        <input type="hidden" asp-for="Location.Latitude" />
+                        <input type="hidden" asp-for="Location.Longitude" />
+                        <input type="hidden" asp-for="Location.CreatedAt" />
+
+                        <div class="mb-3">
+                            <label class="form-label">City</label>
+                            <input class="form-control" value="@Model.Location.City, @Model.Location.Country" disabled />
+                            <div class="form-text">City and country cannot be changed. Delete and re-add if needed.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Location.DisplayName" class="form-label">Display Name</label>
+                            <input asp-for="Location.DisplayName" class="form-control" />
+                            <span asp-validation-for="Location.DisplayName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input asp-for="Location.IsFavorite" class="form-check-input" />
+                            <label asp-for="Location.IsFavorite" class="form-check-label">Mark as Favorite</label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <a asp-page="/Index" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
