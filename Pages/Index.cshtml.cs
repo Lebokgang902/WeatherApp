@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using WeatherApp.Data;
@@ -11,33 +11,53 @@ namespace WeatherApp.Pages
     {
         private readonly ApplicationDbContext _context;
         private readonly SyncService _syncService;
+        private readonly PreferencesService _preferencesService;  // ✅ ADDED
         private readonly ILogger<IndexModel> _logger;
 
-        public IndexModel(ApplicationDbContext context, SyncService syncService, ILogger<IndexModel> logger)
+        public IndexModel(
+            ApplicationDbContext context,
+            SyncService syncService,
+            PreferencesService preferencesService,  // ✅ ADDED
+            ILogger<IndexModel> logger)
         {
             _context = context;
             _syncService = syncService;
+            _preferencesService = preferencesService;  // ✅ ADDED
             _logger = logger;
         }
 
         public List<Location> Locations { get; set; } = new();
+        public UserPreferences UserPreferences { get; set; }  // ✅ ADDED
 
         public async Task OnGetAsync()
         {
+            // ✅ LOAD USER PREFERENCES
+            UserPreferences = await _preferencesService.GetPreferencesAsync();
+
             Locations = await _context.Locations
                 .Include(l => l.WeatherSnapshots)
                 .OrderByDescending(l => l.IsFavorite)
                 .ThenBy(l => l.DisplayName)
                 .ToListAsync();
 
-            // Get most recent weather for each location
+            // Get most recent weather for each location and convert units
             foreach (var location in Locations)
             {
-                location.WeatherSnapshots = location.WeatherSnapshots
+                var snapshots = location.WeatherSnapshots
                     .Where(w => w.ForecastDate == null)
                     .OrderByDescending(w => w.Timestamp)
                     .Take(1)
                     .ToList();
+
+                // ✅ CONVERT TEMPERATURE AND WIND SPEED BASED ON PREFERENCES
+                foreach (var snapshot in snapshots)
+                {
+                    snapshot.Temperature = await _preferencesService.ConvertTemperatureAsync(snapshot.Temperature);
+                    snapshot.FeelsLike = await _preferencesService.ConvertTemperatureAsync(snapshot.FeelsLike);
+                    snapshot.WindSpeed = await _preferencesService.ConvertWindSpeedAsync(snapshot.WindSpeed);
+                }
+
+                location.WeatherSnapshots = snapshots;
             }
         }
 

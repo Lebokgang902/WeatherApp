@@ -2,6 +2,18 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Weather Dashboard";
+
+    // Get values from Model.UserPreferences (loaded in OnGetAsync)
+    var tempUnitSymbol = Model.UserPreferences?.TemperatureUnit == "Fahrenheit" ? "°F" : "°C";
+    var windUnitSymbol = Model.UserPreferences?.WindSpeedUnit switch
+    {
+        "kmh" => "km/h",
+        "mph" => "mph",
+        _ => "m/s"
+    };
+    var showCoordinates = Model.UserPreferences?.ShowCoordinates ?? true;
+    var refreshInterval = Model.UserPreferences?.RefreshInterval ?? 30;
+    var autoRefreshEnabled = Model.UserPreferences?.AutoRefreshEnabled ?? true;
 }
 
 <!-- Hero Section with Weather Background -->
@@ -146,13 +158,13 @@
                                     </div>
                                     <div class="temperature-display">
                                         <span class="temp-value">@current.Temperature.ToString("F0")</span>
-                                        <span class="temp-unit">°C</span>
+                                        <span class="temp-unit">@tempUnitSymbol</span>
                                     </div>
                                     <div class="weather-description">
                                         @current.WeatherDescription
                                     </div>
                                     <div class="feels-like">
-                                        Feels like @current.FeelsLike.ToString("F0")°C
+                                        Feels like @current.FeelsLike.ToString("F0")@tempUnitSymbol
                                     </div>
                                 </div>
 
@@ -175,22 +187,25 @@
                                         <span class="detail-icon">💨</span>
                                         <div>
                                             <small class="text-muted">Wind</small>
-                                            <strong>@current.WindSpeed.ToString("F0") m/s</strong>
+                                            <strong>@current.WindSpeed.ToString("F0") @windUnitSymbol</strong>
                                         </div>
                                     </div>
                                 </div>
 
-                               
-                                <div class="coordinates-section mt-2 pt-2 border-top">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            <span class="detail-icon">📍</span> Coordinates
-                                        </small>
-                                        <small class="text-muted">
-                                            @location.Latitude.ToString("F4")°, @location.Longitude.ToString("F4")°
-                                        </small>
+                                @if (showCoordinates)
+                                {
+                                    <div class="coordinates-section mt-2 pt-2 border-top">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted">
+                                                <span class="detail-icon">📍</span> Coordinates
+                                            </small>
+                                            <small class="text-muted">
+                                                @location.Latitude.ToString("F4")°, @location.Longitude.ToString("F4")°
+                                            </small>
+                                        </div>
                                     </div>
-                                </div>
+                                }
+
                                 @if (current.IsConflict)
                                 {
                                     <div class="alert alert-warning mt-3 py-2 small">
@@ -282,4 +297,24 @@ else
             _ => "🌤️"
         };
     }
+}
+
+@section Scripts {
+    <script>
+        // Auto-refresh based on user preferences
+        @if (autoRefreshEnabled)
+        {
+                <text>
+                    // Refresh weather data every @refreshInterval minutes
+                    console.log('Auto-refresh enabled: @refreshInterval minutes');
+                    setInterval(function() {
+                        console.log('Auto-refreshing weather data...');
+                        // Find all refresh buttons and click them
+                        document.querySelectorAll('form button[type="submit"][formaction*="Sync"]').forEach(button => {
+                            button.click();
+                        });
+                    }, @(refreshInterval * 60 * 1000));
+                </text>
+        }
+    </script>
 }
