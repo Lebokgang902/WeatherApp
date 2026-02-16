@@ -3,6 +3,7 @@
 A weather monitoring application built with ASP.NET Core Razor Pages and OpenWeatherMap API.
 
 ## Features
+
 - **Real-time Weather** - Current conditions for any city worldwide
 - **5-Day Forecast** - Hourly predictions with 3-hour steps
 - **Location Management** - Add, edit, delete, and favorite cities
@@ -14,50 +15,53 @@ A weather monitoring application built with ASP.NET Core Razor Pages and OpenWea
 - **Responsive Design** - Mobile-friendly dashboard
 
 ## 🛠️ Tech Stack
-### Backend:
+
+### Backend
 - ASP.NET Core 8.0
 - Entity Framework Core
 - SQL Server
 - C# 12.0
 
-### Frontend:
+### Frontend
 - Razor Pages
 - Bootstrap 5
 - Chart.js
 - Font Awesome
 
-### External Services:
+### External Services
 - OpenWeatherMap API (Current + 5-Day Forecast)
 
-### Infrastructure:
+### Infrastructure
 - In-memory caching (5-min current / 1-hour forecast)
 - Docker containerization
 - IIS / Azure ready
 
 ## 🚀 Quick Start
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/Lebokgang902/WeatherApp.git
-    ```
 
-2. Set up the database:
-    - Update connection string in `appsettings.json`
-    - Run:
-      ```bash
-      dotnet ef database update
-      ```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Lebokgang902/WeatherApp.git
+   cd WeatherApp
+   ```
 
-3. Run the application:
-    ```bash
-    dotnet run
-    ```
+2. **Set up the database**
+   - Update connection string in `appsettings.json`
+   - Run the migration:
+     ```bash
+     dotnet ef database update
+     ```
 
-4. Access the app:
-    - Navigate to [https://localhost:5001](https://localhost:5001)
+3. **Run the application**
+   ```bash
+   dotnet run
+   ```
+
+4. **Access the app**
+   - Navigate to https://localhost:5001
 
 ## 📁 Project Structure
 
-
+```
 WeatherApp/
 ├── Models/          # Database entities (Location, WeatherSnapshot, UserPreferences)
 ├── Pages/           # Razor Pages UI (Dashboard, History, Settings, Recycle Bin)
@@ -65,19 +69,18 @@ WeatherApp/
 ├── Data/            # Database context and migrations
 ├── wwwroot/         # Static files (CSS, images, scripts)
 └── Program.cs       # Application configuration and startup
-
+```
 
 ## 📊 API Performance
+
 - **API Calls:** 92% reduction with caching
 - **Page Load Time:** 0.6s (vs 1.8s uncached)
 - **Cache Hit Rate:** 87%
 - **API Quota Usage:** 5 calls/min (vs 60 calls/min)
 
 ## 📄 Submission Details
+
 - **Project:** Systems Development Assessment
 - **Date:** 13 February 2026
 - **Author:** Lebokgang902 - Fred Mokgohloa
 - **Repository:** [github.com/Lebokgang902/WeatherApp](https://github.com/Lebokgang902/WeatherApp)
-
-
-
