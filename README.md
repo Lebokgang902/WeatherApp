@@ -57,7 +57,7 @@ A weather monitoring application built with ASP.NET Core Razor Pages and OpenWea
    ```
 
 4. **Access the app**
-   - Navigate to https://localhost:5001
+   - Navigate to  https://localhost:7137
 
 ## 📁 Project Structure
 
