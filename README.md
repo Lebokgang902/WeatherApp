@@ -47,16 +47,12 @@ A weather monitoring application built with ASP.NET Core Razor Pages and OpenWea
       dotnet ef database update
       ```
 
-3. Add API key:
-    - Get a free key from [OpenWeatherMap](https://openweathermap.org/api)
-    - Add to `appsettings.Development.json`
-
-4. Run the application:
+3. Run the application:
     ```bash
     dotnet run
     ```
 
-5. Access the app:
+4. Access the app:
     - Navigate to [https://localhost:5001](https://localhost:5001)
 
 ## 📁 Project Structure
@@ -75,15 +71,9 @@ WeatherApp/
 - **Cache Hit Rate:** 87%
 - **API Quota Usage:** 5 calls/min (vs 60 calls/min)
 
-## 🐳 Docker Deployment
-- Run with Docker Compose:
-    ```bash
-    docker-compose up -d
-    ```
-- Access at: [http://localhost:8080](http://localhost:8080)
 
 ## 📄 Submission Details
-- **Project:** Systems Administrator Assessment
+- **Project:** Systems Development Assessment
 - **Date:** 13 February 2026
-- **Author:** Lebokgang902
+- **Author:** Lebokgang902 - Fred Mokgohloa
 - **Repository:** [github.com/Lebokgang902/WeatherApp](https://github.com/Lebokgang902/WeatherApp)
