@@ -40,7 +40,7 @@ A weather monitoring application built with ASP.NET Core Razor Pages and OpenWea
     git clone https://github.com/Lebokgang902/WeatherApp.git
     ```
 
-2. Set up database:
+2. Set up the database:
     - Update connection string in `appsettings.json`
     - Run:
       ```bash
@@ -54,23 +54,16 @@ A weather monitoring application built with ASP.NET Core Razor Pages and OpenWea
 
 4. Access the app:
     - Navigate to [https://localhost:5001](https://localhost:5001)
-Here's the project structure properly formatted in Markdown:
 
-```markdown
 ## 📁 Project Structure
 
-```
 WeatherApp/
-├── Models/            Database entities (Location, WeatherSnapshot, UserPreferences)
-├── Pages/             Razor Pages UI (Dashboard, History, Settings, Recycle Bin)
-├── Services/          Business logic (Weather, Sync, Cache, Preferences)
-├── Data/              Database context and migrations
-├── wwwroot/           Static files (CSS, images, scripts)
-└── Program.cs         Application configuration and startup
-```
-```
-
-Feel free to copy and paste this into your README file!
+├── Models/ Database entities (Location, WeatherSnapshot, UserPreferences)
+├── Pages/ Razor Pages UI (Dashboard, History, Settings, Recycle Bin)
+├── Services/ Business logic (Weather, Sync, Cache, Preferences)
+├── Data/ Database context and migrations
+├── wwwroot/ Static files (CSS, images, scripts)
+└── Program.cs Application configuration and startup
 
 ## 📊 API Performance
 - **API Calls:** 92% reduction with caching
@@ -78,9 +71,11 @@ Feel free to copy and paste this into your README file!
 - **Cache Hit Rate:** 87%
 - **API Quota Usage:** 5 calls/min (vs 60 calls/min)
 
-
 ## 📄 Submission Details
 - **Project:** Systems Development Assessment
 - **Date:** 13 February 2026
 - **Author:** Lebokgang902 - Fred Mokgohloa
 - **Repository:** [github.com/Lebokgang902/WeatherApp](https://github.com/Lebokgang902/WeatherApp)
+
+
+
