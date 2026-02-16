@@ -33,7 +33,6 @@ A weather monitoring application built with ASP.NET Core Razor Pages and OpenWea
 
 ### Infrastructure
 - In-memory caching (5-min current / 1-hour forecast)
-- Docker containerization
 - IIS / Azure ready
 
 ## 🚀 Quick Start
