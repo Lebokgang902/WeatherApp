@@ -57,12 +57,12 @@ A weather monitoring application built with ASP.NET Core Razor Pages and OpenWea
 
 ## 📁 Project Structure
 WeatherApp/
-├── Models/ Database entities (Location, WeatherSnapshot, UserPreferences)
-├── Pages/ Razor Pages UI (Dashboard, History, Settings, Recycle Bin)
-├── Services/ Business logic (Weather, Sync, Cache, Preferences)
-├── Data/ Database context and migrations
-├── wwwroot/ Static files (CSS, images, scripts)
-└── Program.cs Application configuration and startup
+├── Models/          # Database entities (Location, WeatherSnapshot, UserPreferences)
+├── Pages/           # Razor Pages UI (Dashboard, History, Settings, Recycle Bin)
+├── Services/        # Business logic (Weather, Sync, Cache, Preferences)
+├── Data/            # Database context and migrations
+├── wwwroot/         # Static files (CSS, images, scripts)
+└── Program.cs       # Application configuration and startup
 
 
 ## 📊 API Performance
