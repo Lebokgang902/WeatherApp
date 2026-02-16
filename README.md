@@ -56,6 +56,8 @@ A weather monitoring application built with ASP.NET Core Razor Pages and OpenWea
     - Navigate to [https://localhost:5001](https://localhost:5001)
 
 ## 📁 Project Structure
+
+
 WeatherApp/
 ├── Models/          # Database entities (Location, WeatherSnapshot, UserPreferences)
 ├── Pages/           # Razor Pages UI (Dashboard, History, Settings, Recycle Bin)
