@@ -44,7 +44,7 @@ A weather monitoring application built with ASP.NET Core Razor Pages and OpenWea
    ```
 
 2. **Set up the database**
-   - Update connection string in `appsettings.json`
+   - Update connection string in `appsettings.json` by updating the `DefaultConnection` with your own database server details
    - Run the migration:
      ```bash
      dotnet ef database update
